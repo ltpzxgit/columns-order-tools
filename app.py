@@ -1,9 +1,9 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(page_title="Column Splitter", layout="wide")
+st.set_page_config(page_title="ITOSE - Tools", layout="wide")
 
-st.title("📊 Log Column Splitter (Combine Date + Time)")
+st.title("Column Splitter")
 
 uploaded_file = st.file_uploader("📥 Upload CSV file", type=["csv"])
 
