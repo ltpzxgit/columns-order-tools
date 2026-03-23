@@ -3,7 +3,7 @@ import pandas as pd
 
 st.set_page_config(page_title="Column Splitter", layout="wide")
 
-st.title("📊 Log Column Splitter")
+st.title("📊 Log Column Splitter (Combine Date + Time)")
 
 uploaded_file = st.file_uploader("📥 Upload CSV file", type=["csv"])
 
@@ -22,10 +22,22 @@ if uploaded_file is not None:
         # split column
         split_df = df[column_to_split].astype(str).str.split(delimiter, expand=True)
 
-        # ตั้งชื่อ column ใหม่
-        split_df.columns = [f"{column_to_split}_{i}" for i in range(split_df.shape[1])]
+        # รวม column 0 และ 1 → datetime
+        if 0 in split_df.columns and 1 in split_df.columns:
+            split_df["datetime"] = split_df[0] + " " + split_df[1]
+            split_df["datetime"] = pd.to_datetime(split_df["datetime"], errors="coerce")
 
-        # รวมกับ df เดิม (optional)
+            # ลบ 0 กับ 1
+            split_df = split_df.drop(columns=[0, 1])
+
+            # ย้าย datetime ไปไว้หน้า
+            cols = ["datetime"] + [col for col in split_df.columns if col != "datetime"]
+            split_df = split_df[cols]
+
+        # ตั้งชื่อ column ใหม่
+        split_df.columns = [str(col) for col in split_df.columns]
+
+        # รวมกับ df เดิม
         final_df = pd.concat([df, split_df], axis=1)
 
         st.subheader("✅ Result")
